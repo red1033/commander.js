@@ -1,15 +1,17 @@
-# Options taking varying numbers of option-arguments
+<!-- omit from toc -->
+# Options in Depth
 
 The README covers declaring and using options, and mostly parsing will work the way you and your users expect. This page covers some special cases
 and subtle issues in depth.
 
 - [Options taking varying numbers of option-arguments](#options-taking-varying-numbers-of-option-arguments)
   - [Parsing ambiguity](#parsing-ambiguity)
-    - [Alternative: Make  `--` part of your syntax](#alternative-make-----part-of-your-syntax)
+    - [Alternative: Make `--` part of your syntax](#alternative-make----part-of-your-syntax)
     - [Alternative: Put options last](#alternative-put-options-last)
     - [Alternative: Use options instead of command-arguments](#alternative-use-options-instead-of-command-arguments)
-  - [Combining short options, and options taking arguments](#combining-short-options-and-options-taking-arguments)
-    - [Combining short options as if boolean](#combining-short-options-as-if-boolean)
+- [Combining short options, and options taking arguments](#combining-short-options-and-options-taking-arguments)
+
+## Options taking varying numbers of option-arguments
 
 Certain options take a varying number of arguments:
 
@@ -20,11 +22,11 @@ program
    .option('--test [name...]') // 0 or more
 ```
 
-This page uses examples with options taking 0 or 1 arguments, but the discussions also apply to variadic options taking more arguments.
+This section uses examples with options taking 0 or 1 arguments, but the discussions also apply to variadic options taking more arguments.
 
 For information about terms used in this document see: [terminology](./terminology.md)
 
-## Parsing ambiguity
+### Parsing ambiguity
 
 There is a potential downside to be aware of. If a command has both
 command-arguments and options with varying option-arguments, this introduces a parsing ambiguity which may affect the user of your program.
@@ -73,7 +75,7 @@ ingredient: cheese
 
 If you want to avoid your users needing to learn when to use `--`, there are a few approaches you could take.
 
-### Alternative: Make  `--` part of your syntax
+#### Alternative: Make `--` part of your syntax
 
 Rather than trying to teach your users what `--` does, you could just make it part of your syntax.
 
@@ -98,7 +100,7 @@ technique: scrambled
 ingredient: cheese
 ```
 
-### Alternative: Put options last
+#### Alternative: Put options last
 
 Commander follows the GNU convention for parsing and allows options before or after the command-arguments, or intermingled.
 So by putting the options last, the command-arguments do not get confused with the option-arguments.
@@ -120,7 +122,7 @@ technique: scrambled
 ingredient: cheese
 ```
 
-### Alternative: Use options instead of command-arguments
+#### Alternative: Use options instead of command-arguments
 
 This is a bit more radical, but completely avoids the parsing ambiguity!
 
@@ -148,7 +150,7 @@ Multiple boolean short options can be combined after a single `-`, like `ls -al`
 a single short option which might take a value, as any following characters will
 be taken as the value.
 
-This means that by default you can not combine short options which may take an argument.
+This means that you can not combine short options which may take an argument.
 
 ```js
 program
@@ -167,7 +169,7 @@ if (opts.halal) console.log(`halal servings: ${opts.halal}`);
 ```sh
 $ collect -o 3
 other servings: 3
-$ collect -o3 
+$ collect -o3
 other servings: 3
 $ collect -l -v
 vegan servings: true
@@ -178,24 +180,9 @@ halal servings: v
 
 If you wish to use options taking varying arguments as boolean options, you need to specify them separately.
 
-```
-$ collect -a -v -l
-any servings: true
+```console
+$ collect -o -v -l
+other servings: true
 vegan servings: true
 halal servings: true
-```
-
-### Combining short options as if boolean
-
-Before Commander v5, combining a short option and the value was not supported, and combined short flags were always expanded.
-So `-avl` expanded to `-a -v -l`.
-
-If you want backwards compatible behaviour, or prefer combining short options as booleans to combining short option and value, 
-you may change the behavior.
-
-To modify the parsing of options taking an optional value:
-
-```js
-.combineFlagAndOptionalValue(true)  // `-v45` is treated like `--vegan=45`, this is the default behaviour
-.combineFlagAndOptionalValue(false) // `-vl` is treated like `-v -l`
 ```

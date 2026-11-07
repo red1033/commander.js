@@ -1,7 +1,5 @@
 #!/usr/bin/env node
 
-const program = require('../../');
+import { program } from '../../index.js';
 
-program
-  .command('sub', 'install one or more packages')
-  .parse(process.argv);
+program.command('sub', 'install one or more packages').parse(process.argv);
